@@ -224,17 +224,27 @@ def detect_and_color_splash(model, image_path=None, video_path=None):
 
     # Image or video?
     if image_path:
-        # Run model detection and generate the color splash effect
-        print("Running on {}".format(args.image))
-        # Read image
-        image = skimage.io.imread(args.image)
-        # Detect objects
-        r = model.detect([image], verbose=1)[0]
-        # Color splash
-        splash = color_splash(image, r['masks'])
-        # Save output
-        file_name = "splash_{:%Y%m%dT%H%M%S}.png".format(datetime.datetime.now())
-        skimage.io.imsave(file_name, splash)
+
+        import glob
+
+        if os.path.isdir(image_path):
+            image_paths = glob.glob(image_path)
+        else:
+            image_paths = [image_path]
+
+        for image_path in image_paths:
+
+            # Run model detection and generate the color splash effect
+            print("Running on {}".format(image_path))
+            # Read image
+            image = skimage.io.imread(image_path)
+            # Detect objects
+            r = model.detect([image], verbose=1)[0]
+            # Color splash
+            splash = color_splash(image, r['masks'])
+            # Save output
+            file_name = "splash_{:%Y%m%dT%H%M%S}.png".format(datetime.datetime.now())
+            skimage.io.imsave(file_name, splash)
     elif video_path:
         import cv2
         # Video capture
