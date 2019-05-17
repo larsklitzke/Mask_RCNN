@@ -228,7 +228,7 @@ def detect_and_color_splash(model, image_path=None, video_path=None):
         import glob
 
         if os.path.isdir(image_path):
-            image_paths = glob.glob(image_path)
+            image_paths = glob.glob("{}/*.jpg".format(image_path))
         else:
             image_paths = [image_path]
 
