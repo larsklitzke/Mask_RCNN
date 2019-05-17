@@ -271,6 +271,20 @@ def detect_and_color_splash(model, image_path=None, video_path=None):
     print("Saved to ", file_name)
 
 
+def allow_dynamic_gpu_growth():
+    """
+    That function is required for certain combinations of GPU and tensorflow, e.g. 1.13.1 with RTX 2080.
+    """
+    import tensorflow as tf
+    from keras.backend.tensorflow_backend import set_session
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+    config.log_device_placement = True  # to log device placement (on which device the operation ran)
+    # (nothing gets printed in Jupyter, only if you run it standalone)
+    sess = tf.Session(config=config)
+    set_session(sess)  # set this TensorFlow session as the default session for Keras
+
+
 ############################################################
 #  Training
 ############################################################
@@ -312,6 +326,8 @@ if __name__ == '__main__':
     print("Weights: ", args.weights)
     print("Dataset: ", args.dataset)
     print("Logs: ", args.logs)
+
+    allow_dynamic_gpu_growth()
 
     # Configurations
     if args.command == "train":
